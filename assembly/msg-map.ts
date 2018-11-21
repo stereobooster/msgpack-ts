@@ -19,10 +19,10 @@ abstract class MsgMap implements MsgMapInterface {
     this.msgpackLength += key.msgpackLength + value.msgpackLength;
   }
 
-  valueOf(): { [key: string]: any } {
+  valueOf(): Object {//{ [key: string]: any } {
     const array = this.array;
     const length = array.length;
-    const obj: { [key: string]: any } = {};
+    const obj/*: { [key: string]: any }*/ = {};
     for (let i = 0; i < length; ) {
       const key = array[i++];
       const val = array[i++];

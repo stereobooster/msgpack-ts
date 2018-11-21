@@ -9,7 +9,7 @@ export class MsgNil implements MsgInterface {
     return 1;
   }
 
-  valueOf(): null {
+  valueOf(): Null {
     return null;
   }
 }

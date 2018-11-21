@@ -10,7 +10,7 @@ export { MsgBinary } from "./msg-binary";
 export { MsgBoolean } from "./msg-boolean";
 export { MsgFixMap, MsgMap16, MsgMap32 } from "./msg-map";
 export { MsgNil } from "./msg-nil";
-export * from "./msg-number";
+// export * from "./msg-number";
 export {
   MsgString,
   MsgFixString,

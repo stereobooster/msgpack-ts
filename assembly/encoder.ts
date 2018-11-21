@@ -14,7 +14,7 @@ const UINT16_NEXT = 0x10000;
 const UINT32_NEXT = 0x100000000;
 
 type Encoder = (value: any) => MsgInterface;
-type Encoders = { [key: string]: Encoder };
+type Encoders = Object; //{ [key: string]: Encoder };
 
 const encoders: Encoders = {
   number: encodeNumber,
@@ -80,8 +80,8 @@ function encodeObject(value: object): MsgInterface {
     const MsgArray =
       length < 16 ? MsgFixArray : length < 65536 ? MsgArray16 : MsgArray32;
     const msg = new MsgArray();
-    value.forEach(function(item) {
-      return msg.add(encodeMsg(item));
+    value.forEach(function(item): void {
+      msg.add(encodeMsg(item));
     });
     return msg;
   }
