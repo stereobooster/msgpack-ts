@@ -1,4 +1,4 @@
-import {MsgInterface} from "msg-interface";
+import {MsgInterface} from "./msg-interface";
 
 export interface MsgMapInterface extends MsgInterface {
     set(key: MsgInterface, value: MsgInterface): void;

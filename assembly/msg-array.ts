@@ -1,4 +1,4 @@
-import {MsgInterface} from "msg-interface";
+import {MsgInterface} from "./msg-interface";
 
 export interface MsgArrayInterface extends MsgInterface {
     add(value: MsgInterface): void;

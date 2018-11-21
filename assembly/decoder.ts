@@ -1,6 +1,6 @@
 import {MsgExt} from "msg-ext";
-import {MsgInterface} from "msg-interface";
-import * as N from "msg-number";
+import {MsgInterface} from "./msg-interface";
+import * as N from "./msg-number";
 
 import {MsgFixArray, MsgArray16, MsgArray32, MsgArrayInterface} from "./msg-array";
 import {MsgBinary} from "./msg-binary";

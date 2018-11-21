@@ -1,5 +1,5 @@
 import * as assert from "assert";
-import {isMsg, MsgInterface, msgToBuffer} from "msg-interface";
+import {isMsg, MsgInterface, msgToBuffer} from "./msg-interface";
 import * as m from "../";
 
 const TITLE = __filename.split("/").pop() as string;

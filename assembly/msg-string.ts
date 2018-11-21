@@ -1,4 +1,4 @@
-import {MsgInterface} from "msg-interface";
+import {MsgInterface} from "./msg-interface";
 
 interface MsgStringInterface extends MsgInterface {
     valueOf(): string;

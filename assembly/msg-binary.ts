@@ -1,4 +1,4 @@
-import {MsgInterface} from "msg-interface";
+import {MsgInterface} from "./msg-interface";
 
 export class MsgBinary implements MsgInterface {
     msgpackLength: number;
