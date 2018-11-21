@@ -25,9 +25,11 @@ export class MsgString implements MsgStringInterface {
     writeMsgpackTo(buffer: Buffer, offset: number): number {
         const length = this.value.length * 3;
         const expect = (length < 32) ? MsgFixString : (length < 256) ? MsgString8 : (length < 65536) ? MsgString16 : MsgString32;
+        // @ts-ignore
         const bytes = expect.prototype.writeMsgpackTo.call(this, buffer, offset);
         const actual = (bytes < 2 + 32) ? MsgFixString : (bytes < 3 + 256) ? MsgString8 : (bytes < 5 + 65536) ? MsgString16 : MsgString32;
         if (expect === actual) return bytes;
+        // @ts-ignore
         return actual.prototype.writeMsgpackTo.call(this, buffer, offset);
     }
 }
@@ -113,6 +115,6 @@ export class MsgStringBuffer implements MsgStringInterface {
         const start = this.offset;
         const end = start + this.msgpackLength;
         this.buffer.copy(buffer, offset, start, end);
-        return length;
+        return this.msgpackLength;
     }
 }

@@ -4,7 +4,7 @@
  * @see https://github.com/kawanet/msg-interface
  */
 
-export interface MsgInterface {
+export interface MsgInterface<T = any> {
   /**
    * expected maximum length of msgpack representation in bytes
    */
@@ -15,25 +15,27 @@ export interface MsgInterface {
    * @return {number} actual length of written in bytes
    */
   writeMsgpackTo(buffer: Buffer, offset: number): number;
+
+  valueOf(): T;
 }
 
 /**
-* @return {boolean} true when the argument has the MsgInterface implemented
-*/
+ * @return {boolean} true when the argument has the MsgInterface implemented
+ */
 
 export function isMsg(msg: any): boolean {
   return !!(msg && msg.msgpackLength >= 0 && msg.writeMsgpackTo);
 }
 
 /**
-* @return {Buffer} msgpack representation
-*/
+ * @return {Buffer} msgpack representation
+ */
 
 export function msgToBuffer(msg: MsgInterface): Buffer {
   const expected = +msg.msgpackLength;
 
   if (isNaN(expected)) {
-      throw new Error("Invalid msgpackLength");
+    throw new Error("Invalid msgpackLength");
   }
 
   let buffer = Buffer.alloc(expected);
@@ -41,7 +43,7 @@ export function msgToBuffer(msg: MsgInterface): Buffer {
 
   // trim
   if (expected > actual) {
-      buffer = buffer.slice(0, actual);
+    buffer = buffer.slice(0, actual);
   }
 
   return buffer;

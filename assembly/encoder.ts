@@ -89,11 +89,13 @@ function encodeObject(value: object): MsgInterface {
   }
 
   {
+    // @ts-ignore
     const array = Object.keys(value);
     const length = array.length / 2;
     const MsgMap =
       length < 16 ? MsgFixMap : length < 65536 ? MsgMap16 : MsgMap32;
     const msg = new MsgMap();
+    // @ts-ignore
     array.forEach(key =>
       msg.set(encodeMsg(key), encodeMsg((value as any)[key]))
     );

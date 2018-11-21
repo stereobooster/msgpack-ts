@@ -1,115 +1,160 @@
-import {MsgInterface} from "msg-interface";
-import {Int64BE, Uint64BE} from "int64-buffer";
+import { MsgInterface } from "msg-interface";
+import { Int64BE, Uint64BE } from "int64-buffer";
 
-exports const MsgFixInt = create(1, function(buffer, offset) {
-  offset |= 0;
-  buffer[offset] = this.value & 255;
-  return 1;
-});
+export class MsgNumber implements MsgInterface {
+  msgpackLength: number;
+  value: number;
 
-exports const MsgInt8 = create(2, function(buffer, offset) {
-  offset |= 0;
-  buffer[offset] = 0xd0;
-  buffer[offset + 1] = this.value & 255;
-  return 2;
-});
-
-exports const MsgUInt8 = create(2, function(buffer, offset) {
-  offset |= 0;
-  buffer[offset] = 0xcc;
-  buffer[offset + 1] = this.value & 255;
-  return 2;
-});
-
-exports const MsgInt16 = create(3, function(buffer, offset) {
-  offset |= 0;
-  buffer[offset] = 0xd1;
-  buffer.writeInt16BE(+this.value, offset + 1);
-  return 3;
-});
-
-exports.MsgUInt16 = create(3, function(buffer, offset) {
-  offset |= 0;
-  buffer[offset] = 0xcd;
-  buffer.writeUInt16BE(+this.value, offset + 1);
-  return 3;
-});
-
-exports const MsgInt32 = create(5, function(buffer, offset) {
-  offset |= 0;
-  buffer[offset] = 0xd2;
-  buffer.writeInt32BE(+this.value, offset + 1);
-  return 5;
-});
-
-exports const MsgUInt32 = create(5, function(buffer, offset) {
-  offset |= 0;
-  buffer[offset] = 0xce;
-  buffer.writeUInt32BE(+this.value, offset + 1);
-  return 5;
-});
-
-exports const MsgFloat32 = create(5, function(buffer, offset) {
-  offset |= 0;
-  buffer[offset] = 0xca;
-  buffer.writeFloatBE(+this.value, offset + 1);
-  return 5;
-});
-
-exports const MsgFloat64 = create(9, function(buffer, offset) {
-  offset |= 0;
-  buffer[offset] = 0xcb;
-  buffer.writeDoubleBE(+this.value, offset + 1);
-  return 9;
-});
-
-exports const MsgUInt64 = inherits(I.Uint64BE, 0xcf);
-MsgUInt64.isUint64BE = I.Uint64BE.isUint64BE;
-
-exports const MsgInt64 = inherits(I.Int64BE, 0xd3);
-MsgInt64.isInt64BE = I.Int64BE.isInt64BE;
-
-function create(msgpackLength, writeMsgpackTo) {
-  var P = MsgNumber.prototype;
-
-  P.msgpackLength = msgpackLength;
-
-  P.writeMsgpackTo = writeMsgpackTo;
-
-  P.valueOf = valueOf;
-
-  P.toString = toString;
-
-  return function (value) {
+  constructor(value: any) {
     this.value = +value;
+  }
+
+  valueOf(): number {
+    return +this.value;
+  }
+
+  toString(radix: number): string {
+    // @ts-ignore
+    return (+this.value).toString(radix);
+  }
+
+  writeMsgpackTo(buffer: Buffer, offset: number): number {
+    throw new Error("Not implemented");
   }
 }
 
-function valueOf() {
-  return +this.value;
-}
+export class MsgFixInt extends MsgNumber {
+  msgpackLength: number = 1;
 
-function toString(radix) {
-  return (+this.value).toString(radix);
-}
-
-function inherits(_super, token) {
-  var P = MsgNumber.prototype = Object.create(_super.prototype);
-
-  P.msgpackLength = 9;
-
-  P.writeMsgpackTo = function(buffer, offset) {
+  writeMsgpackTo(buffer: Buffer, offset: number): number {
     offset |= 0;
-    buffer[offset] = token;
+    buffer[offset] = this.value & 255;
+    return 1;
+  }
+}
+
+export class MsgInt8 extends MsgNumber {
+  msgpackLength: number = 2;
+
+  writeMsgpackTo(buffer: Buffer, offset: number): number {
+    offset |= 0;
+    buffer[offset] = 0xd0;
+    buffer[offset + 1] = this.value & 255;
+    return 2;
+  }
+}
+
+export class MsgUInt8 extends MsgNumber {
+  msgpackLength: number = 2;
+
+  writeMsgpackTo(buffer: Buffer, offset: number): number {
+    offset |= 0;
+    buffer[offset] = 0xcc;
+    buffer[offset + 1] = this.value & 255;
+    return 2;
+  }
+}
+
+export class MsgInt16 extends MsgNumber {
+  msgpackLength: number = 3;
+
+  writeMsgpackTo(buffer: Buffer, offset: number): number {
+    offset |= 0;
+    buffer[offset] = 0xd1;
+    buffer.writeInt16BE(+this.value, offset + 1);
+    return 3;
+  }
+}
+
+export class MsgUInt16 extends MsgNumber {
+  msgpackLength: number = 3;
+
+  writeMsgpackTo(buffer: Buffer, offset: number): number {
+    offset |= 0;
+    buffer[offset] = 0xcd;
+    buffer.writeUInt16BE(+this.value, offset + 1);
+    return 3;
+  }
+}
+
+export class MsgInt32 extends MsgNumber {
+  msgpackLength: number = 5;
+
+  writeMsgpackTo(buffer: Buffer, offset: number): number {
+    offset |= 0;
+    buffer[offset] = 0xd2;
+    buffer.writeInt32BE(+this.value, offset + 1);
+    return 5;
+  }
+}
+
+export class MsgUInt32 extends MsgNumber {
+  msgpackLength: number = 5;
+
+  writeMsgpackTo(buffer: Buffer, offset: number): number {
+    offset |= 0;
+    buffer[offset] = 0xce;
+    buffer.writeUInt32BE(+this.value, offset + 1);
+    return 5;
+  }
+}
+
+export class MsgFloat32 extends MsgNumber {
+  msgpackLength: number = 5;
+
+  writeMsgpackTo(buffer: Buffer, offset: number): number {
+    offset |= 0;
+    buffer[offset] = 0xca;
+    buffer.writeFloatBE(+this.value, offset + 1);
+    return 5;
+  }
+}
+
+export class MsgFloat64 extends MsgNumber {
+  msgpackLength: number = 9;
+
+  writeMsgpackTo(buffer: Buffer, offset: number): number {
+    offset |= 0;
+    buffer[offset] = 0xcb;
+    buffer.writeDoubleBE(+this.value, offset + 1);
+    return 9;
+  }
+}
+
+export class MsgInt64 extends Int64BE implements MsgInterface {
+  msgpackLength: number = 9;
+
+  valueOf(): Int64BE {
+    return this;
+  }
+
+  toString(radix: number): string {
+    return this.toString(radix);
+  }
+
+  writeMsgpackTo(buffer: Buffer, offset: number): number {
+    offset |= 0;
+    buffer[offset] = 0xd3;
     this.toBuffer().copy(buffer, offset + 1);
     return 9;
-  };
+  }
+}
 
-  return MsgNumber;
+export class MsgUInt64 extends Uint64BE implements MsgInterface {
+  msgpackLength: number = 9;
 
-  function MsgNumber() {
-    var that = (this instanceof MsgNumber) ? this : new MsgNumber();
-    _super.apply(that, arguments);
-    return that;
+  valueOf(): Uint64BE {
+    return this;
+  }
+
+  toString(radix: number): string {
+    return this.toString(radix);
+  }
+
+  writeMsgpackTo(buffer: Buffer, offset: number): number {
+    offset |= 0;
+    buffer[offset] = 0xcf;
+    this.toBuffer().copy(buffer, offset + 1);
+    return 9;
   }
 }
