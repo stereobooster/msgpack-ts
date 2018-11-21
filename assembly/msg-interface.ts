@@ -4,7 +4,7 @@
  * @see https://github.com/kawanet/msg-interface
  */
 
-export interface MsgInterface<T = any> {
+export interface MsgInterface {
   /**
    * expected maximum length of msgpack representation in bytes
    */
@@ -16,7 +16,7 @@ export interface MsgInterface<T = any> {
    */
   writeMsgpackTo(buffer: Buffer, offset: number): number;
 
-  valueOf(): T;
+  valueOf(): any;
 }
 
 /**

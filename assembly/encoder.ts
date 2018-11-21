@@ -14,19 +14,27 @@ const UINT16_NEXT = 0x10000;
 const UINT32_NEXT = 0x100000000;
 
 type Encoder = (value: any) => MsgInterface;
-type Encoders = { [type: string]: Encoder };
+type Encoders = { [key: string]: Encoder };
 
 const encoders: Encoders = {
-  boolean: (value: boolean) => new MsgBoolean(value),
   number: encodeNumber,
   object: encodeObject,
-  string: (value: string) => new MsgString(value)
+  boolean: encodeBoolean,
+  string: encodeString
 };
 
 export function encodeMsg(value: any): MsgInterface {
   const type = typeof value;
   const f = encoders[type];
   return f && f(value);
+}
+
+function encodeString(value: string): MsgString {
+  return new MsgString(value);
+}
+
+function encodeBoolean(value: boolean): MsgBoolean {
+  return new MsgBoolean(value);
 }
 
 function encodeNumber(value: number): MsgInterface {
@@ -72,7 +80,9 @@ function encodeObject(value: object): MsgInterface {
     const MsgArray =
       length < 16 ? MsgFixArray : length < 65536 ? MsgArray16 : MsgArray32;
     const msg = new MsgArray();
-    value.forEach(item => msg.add(encodeMsg(item)));
+    value.forEach(function(item) {
+      return msg.add(encodeMsg(item));
+    });
     return msg;
   }
 
@@ -95,10 +105,10 @@ function encodeObject(value: object): MsgInterface {
     const MsgMap =
       length < 16 ? MsgFixMap : length < 65536 ? MsgMap16 : MsgMap32;
     const msg = new MsgMap();
-    // @ts-ignore
-    array.forEach(key =>
-      msg.set(encodeMsg(key), encodeMsg((value as any)[key]))
-    );
+    array.forEach(function(key: MsgInterface): void {
+      // @ts-ignore
+      msg.set(encodeMsg(key), encodeMsg((value as any)[key]));
+    });
     return msg;
   }
 }

@@ -7,11 +7,13 @@ export interface MsgMapInterface extends MsgInterface {
 abstract class MsgMap implements MsgMapInterface {
   msgpackLength: number;
 
-  protected array = [] as MsgInterface[];
+  protected array: MsgInterface[] = [];
 
-  abstract writeMsgpackTo(buffer: Buffer, offset: number): number;
+  writeMsgpackTo(buffer: Buffer, offset: number): number {
+    throw new Error("Not implemented");
+  }
 
-  set(key: MsgInterface, value: MsgInterface) {
+  set(key: MsgInterface, value: MsgInterface): void {
     this.array.push(key);
     this.array.push(value);
     this.msgpackLength += key.msgpackLength + value.msgpackLength;
@@ -20,7 +22,7 @@ abstract class MsgMap implements MsgMapInterface {
   valueOf(): { [key: string]: any } {
     const array = this.array;
     const length = array.length;
-    const obj = {} as { [key: string]: any };
+    const obj: { [key: string]: any } = {};
     for (let i = 0; i < length; ) {
       const key = array[i++];
       const val = array[i++];
@@ -39,7 +41,9 @@ export class MsgFixMap extends MsgMap {
     buffer[offset] = 0x80 | length;
     let pos = offset + 1;
 
-    this.array.forEach(msg => (pos += msg.writeMsgpackTo(buffer, pos)));
+    this.array.forEach(function(msg): void {
+      pos += msg.writeMsgpackTo(buffer, pos);
+    });
     return pos - offset;
   }
 }
@@ -54,7 +58,9 @@ export class MsgMap16 extends MsgMap {
     buffer[offset] = 0xde;
     let pos = buffer.writeUInt16BE(length, offset + 1);
 
-    this.array.forEach(msg => (pos += msg.writeMsgpackTo(buffer, pos)));
+    this.array.forEach(function(msg): void {
+      pos += msg.writeMsgpackTo(buffer, pos);
+    });
     return pos - offset;
   }
 }
@@ -67,7 +73,9 @@ export class MsgMap32 extends MsgMap {
     buffer[offset] = 0xdf;
     let pos = buffer.writeUInt32BE(length, offset + 1);
 
-    this.array.forEach(msg => (pos += msg.writeMsgpackTo(buffer, pos)));
+    this.array.forEach(function(msg): void {
+      pos += msg.writeMsgpackTo(buffer, pos);
+    });
     return pos - offset;
   }
 }

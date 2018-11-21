@@ -7,17 +7,21 @@ export interface MsgArrayInterface extends MsgInterface {
 abstract class MsgArray implements MsgArrayInterface {
   msgpackLength: number;
 
-  protected array = [] as MsgInterface[];
+  protected array: MsgInterface[] = [];
 
-  abstract writeMsgpackTo(buffer: Buffer, offset: number): number;
+  writeMsgpackTo(buffer: Buffer, offset: number): number {
+    throw new Error("Not implemented");
+  }
 
-  add(value: MsgInterface) {
+  add(value: MsgInterface): void {
     this.array.push(value);
     this.msgpackLength += value.msgpackLength;
   }
 
   valueOf(): Array<any> {
-    return this.array.map(msg => msg.valueOf());
+    return this.array.map(function(msg): any {
+      return msg.valueOf();
+    });
   }
 }
 
@@ -30,7 +34,9 @@ export class MsgFixArray extends MsgArray {
     buffer[offset] = 0x90 | length;
     let pos = offset + 1;
 
-    this.array.forEach(msg => (pos += msg.writeMsgpackTo(buffer, pos)));
+    this.array.forEach(function(msg): void {
+      pos += msg.writeMsgpackTo(buffer, pos);
+    });
     return pos - offset;
   }
 }
@@ -44,7 +50,9 @@ export class MsgArray16 extends MsgArray {
     buffer[offset] = 0xdc;
     let pos = buffer.writeUInt16BE(length, offset + 1);
 
-    this.array.forEach(msg => (pos += msg.writeMsgpackTo(buffer, pos)));
+    this.array.forEach(function(msg): void {
+      pos += msg.writeMsgpackTo(buffer, pos);
+    });
     return pos - offset;
   }
 }
@@ -57,7 +65,9 @@ export class MsgArray32 extends MsgArray {
     buffer[offset] = 0xdd;
     let pos = buffer.writeUInt32BE(length, offset + 1);
 
-    this.array.forEach(msg => (pos += msg.writeMsgpackTo(buffer, pos)));
+    this.array.forEach(function(msg): void {
+      pos += msg.writeMsgpackTo(buffer, pos);
+    });
     return pos - offset;
   }
 }
